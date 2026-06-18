@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seans · İzleme listem, tek ekranda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Oswald:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#161311;        /* sıcak siyaha yakın arka plan */
+    --ink-2:#1d1814;       /* panel */
+    --card:#221c18;        /* kart yüzeyi */
+    --card-2:#2a231d;
+    --bone:#ece3d2;        /* ana metin */
+    --bone-dim:#b3a78f;    /* ikincil metin */
+    --bone-faint:#7d735f;
+    --amber:#e8a33d;       /* projektör amberi - vurgu */
+    --amber-deep:#c9852a;
+    --tomato:#e5523b;      /* RT taze */
+    --splat:#86a76b;       /* RT çürük (sönük yeşil) */
+    --imdb:#f5c518;        /* IMDb sarısı */
+    --stream:#74b08a;      /* abonelikte var */
+    --line:rgba(236,227,210,.10);
+    --line-2:rgba(236,227,210,.06);
+    --shadow:0 18px 40px -20px rgba(0,0,0,.7);
+    --r:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(232,163,61,.08), transparent 60%),
+      var(--ink);
+    color:var(--bone);
+    font-family:"Inter",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+    min-height:100vh;
+  }
+  a{color:inherit}
+  button{font-family:inherit;cursor:pointer}
+  ::selection{background:var(--amber);color:#1a1410}
+
+  /* ---------- Marquee başlık ---------- */
+  header.marquee{
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg, rgba(232,163,61,.05), transparent);
+  }
+  .marquee-inner{
+    max-width:1280px;margin:0 auto;padding:26px 22px 22px;
+    display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;
+  }
+  .brand .eyebrow{
+    font-family:"Oswald",sans-serif;text-transform:uppercase;letter-spacing:.34em;
+    font-size:11px;color:var(--amber);font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:10px;
+  }
+  .eyebrow .bulbs{display:inline-flex;gap:5px}
+  .eyebrow .bulbs i{width:5px;height:5px;border-radius:50%;background:var(--amber);display:block;box-shadow:0 0 6px var(--amber);opacity:.85;animation:flick 2.4s infinite}
+  .eyebrow .bulbs i:nth-child(2){animation-delay:.4s}
+  .eyebrow .bulbs i:nth-child(3){animation-delay:.8s}
+  .eyebrow .bulbs i:nth-child(4){animation-delay:1.2s}
+  @keyframes flick{0%,100%{opacity:.85}48%{opacity:.85}50%{opacity:.25}52%{opacity:.85}}
+  h1.title{
+    font-family:"Oswald",sans-serif;font-weight:700;text-transform:uppercase;
+    font-size:clamp(34px,6vw,58px);line-height:.92;letter-spacing:.01em;margin:0;color:var(--bone);
+  }
+  h1.title span{color:var(--amber)}
+  .tagline{color:var(--bone-dim);font-size:13.5px;margin-top:8px;max-width:46ch}
+
+  .toolbar{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+  .btn{
+    border:1px solid var(--line);background:var(--ink-2);color:var(--bone);
+    padding:9px 14px;border-radius:10px;font-size:13px;font-weight:500;
+    display:inline-flex;align-items:center;gap:8px;transition:border-color .15s,background .15s,transform .05s;
+  }
+  .btn:hover{border-color:rgba(236,227,210,.28);background:var(--card)}
+  .btn:active{transform:translateY(1px)}
+  .btn.primary{background:var(--amber);color:#1a1410;border-color:transparent;font-weight:600}
+  .btn.primary:hover{background:#f0ad48}
+  .btn svg{width:15px;height:15px}
+
+  /* ---------- Kontrol şeridi ---------- */
+  .controls{
+    max-width:1280px;margin:0 auto;padding:18px 22px;
+    display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+    border-bottom:1px solid var(--line-2);
+  }
+  .field{display:flex;align-items:center;gap:8px}
+  .field label{font-family:"Oswald",sans-serif;text-transform:uppercase;letter-spacing:.16em;font-size:10.5px;color:var(--bone-faint);font-weight:600}
+  input[type=text],input[type=password],select{
+    background:var(--ink-2);border:1px solid var(--line);color:var(--bone);
+    padding:9px 12px;border-radius:10px;font-size:13.5px;font-family:inherit;outline:none;transition:border-color .15s;
+  }
+  input::placeholder{color:var(--bone-faint)}
+  input:focus,select:focus{border-color:var(--amber)}
+  .search-wrap{position:relative;flex:1 1 220px;min-width:180px}
+  .search-wrap input{width:100%;padding-left:34px}
+  .search-wrap svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;color:var(--bone-faint)}
+  select{cursor:pointer}
+  .chip{
+    border:1px solid var(--line);background:transparent;color:var(--bone-dim);
+    padding:8px 13px;border-radius:999px;font-size:12.5px;display:inline-flex;align-items:center;gap:7px;transition:.15s;
+  }
+  .chip[aria-pressed=true]{background:rgba(116,176,138,.16);border-color:rgba(116,176,138,.5);color:#bfe0cb}
+  .chip .dot{width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.7}
+  .slider-wrap{display:flex;align-items:center;gap:9px;color:var(--bone-dim);font-size:12.5px}
+  input[type=range]{accent-color:var(--tomato);width:96px}
+  .mono{font-family:"Space Mono",monospace}
+
+  /* ---------- Durum / ilerleme ---------- */
+  .statusbar{
+    max-width:1280px;margin:0 auto;padding:12px 22px;
+    display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;
+    color:var(--bone-dim);font-size:12.5px;
+  }
+  .progress{flex:1 1 200px;max-width:340px;height:4px;border-radius:4px;background:var(--line);overflow:hidden;display:none}
+  .progress.on{display:block}
+  .progress > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--amber-deep),var(--amber));transition:width .25s}
+
+  .banner{
+    max-width:1280px;margin:8px auto 0;padding:11px 16px;border-radius:10px;font-size:13px;
+    display:none;align-items:center;gap:10px;
+  }
+  .banner.on{display:flex}
+  .banner.err{background:rgba(229,82,59,.12);border:1px solid rgba(229,82,59,.4);color:#f3b3a7}
+  .banner.warn{background:rgba(232,163,61,.12);border:1px solid rgba(232,163,61,.35);color:#f1cd92}
+
+  /* ---------- Boş / kurulum durumu ---------- */
+  .empty{max-width:760px;margin:40px auto;padding:0 22px;text-align:left}
+  .empty h2{font-family:"Oswald",sans-serif;text-transform:uppercase;letter-spacing:.06em;font-size:22px;margin:0 0 6px}
+  .empty p{color:var(--bone-dim);font-size:14px;margin:0 0 22px}
+  .steps{display:grid;gap:14px}
+  .step{display:flex;gap:14px;align-items:flex-start;background:var(--ink-2);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px}
+  .step .n{font-family:"Oswald",sans-serif;font-weight:700;font-size:18px;color:var(--amber);min-width:26px}
+  .step h3{margin:0 0 3px;font-size:14.5px;font-weight:600}
+  .step p{margin:0;font-size:13px;color:var(--bone-dim)}
+  .step a{color:var(--amber);text-decoration:none;border-bottom:1px solid rgba(232,163,61,.4)}
+
+  /* ---------- Izgara ---------- */
+  .grid{
+    max-width:1280px;margin:6px auto 60px;padding:14px 22px;
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;
+  }
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+    overflow:hidden;display:flex;flex-direction:column;position:relative;
+    box-shadow:var(--shadow);min-height:150px;transition:border-color .15s,transform .15s;
+  }
+  .card:hover{border-color:rgba(232,163,61,.35);transform:translateY(-2px)}
+  .card-top{display:flex;gap:0}
+  /* film şeridi perforasyonu - imza detay */
+  .poster-wrap{position:relative;width:104px;flex:0 0 104px;background:var(--ink-2)}
+  .poster-wrap::after{
+    content:"";position:absolute;top:0;right:0;width:9px;height:100%;
+    background:repeating-linear-gradient(180deg,transparent 0 7px,rgba(232,163,61,.5) 7px 11px,transparent 11px 18px);
+    opacity:.5;
+  }
+  .poster{width:104px;height:156px;object-fit:cover;display:block;background:var(--ink-2)}
+  .poster.ph{display:flex;align-items:center;justify-content:center;color:var(--bone-faint);font-family:"Oswald",sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:.1em}
+  .card-body{flex:1;padding:14px 15px 13px;min-width:0;display:flex;flex-direction:column;gap:9px}
+  .ct-title{font-family:"Oswald",sans-serif;font-weight:600;font-size:17px;line-height:1.12;color:var(--bone);letter-spacing:.005em}
+  .ct-meta{font-size:11.5px;color:var(--bone-faint);display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+  .ct-meta .yr{color:var(--bone-dim);font-family:"Space Mono",monospace}
+
+  .scores{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .score{
+    display:inline-flex;align-items:center;gap:6px;border-radius:8px;padding:4px 9px 4px 7px;
+    font-family:"Space Mono",monospace;font-size:13px;font-weight:700;border:1px solid var(--line);
+  }
+  .score svg{width:15px;height:15px;flex:0 0 15px}
+  .score.rt-fresh{color:#ffb9ac;border-color:rgba(229,82,59,.45);background:rgba(229,82,59,.12)}
+  .score.rt-rotten{color:#cfe1bf;border-color:rgba(134,167,107,.45);background:rgba(134,167,107,.12)}
+  .score.imdb{color:#f7d65f;border-color:rgba(245,197,24,.35);background:rgba(245,197,24,.10)}
+  .score.muted{color:var(--bone-faint);background:transparent}
+  .score .lbl{font-family:"Inter";font-weight:600;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;opacity:.7;margin-left:1px}
+
+  .where{border-top:1px solid var(--line-2);padding-top:10px;margin-top:auto;display:flex;flex-direction:column;gap:8px}
+  .where .row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .where .tag{font-family:"Oswald",sans-serif;text-transform:uppercase;letter-spacing:.13em;font-size:9.5px;font-weight:600;min-width:64px;color:var(--bone-faint)}
+  .where .tag.flat{color:var(--stream)}
+  .prov{display:flex;gap:6px;flex-wrap:wrap}
+  .prov img{width:26px;height:26px;border-radius:6px;object-fit:cover;border:1px solid var(--line);background:var(--ink-2)}
+  .where .none{font-size:12px;color:var(--bone-faint);font-style:italic}
+
+  .actions{display:flex;gap:8px;border-top:1px solid var(--line-2);padding:11px 15px;background:rgba(0,0,0,.12)}
+  .actions a{
+    flex:1;text-align:center;text-decoration:none;font-size:12px;font-weight:600;padding:8px;border-radius:9px;
+    border:1px solid var(--line);color:var(--bone-dim);transition:.15s;display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  }
+  .actions a:hover{border-color:rgba(232,163,61,.4);color:var(--bone)}
+  .actions a.watch:hover{background:rgba(232,163,61,.12)}
+  .actions a svg{width:13px;height:13px}
+  .actions a.disabled{opacity:.4;pointer-events:none}
+
+  .card.loading .card-body, .card.loading .actions{opacity:.5}
+  .skeleton{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+  .spinner{width:22px;height:22px;border:2.5px solid var(--line);border-top-color:var(--amber);border-radius:50%;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .card.error .card-body::after{content:"Bilgi bulunamadı";color:var(--bone-faint);font-size:11.5px;font-style:italic}
+
+  /* ---------- Ayar modalı ---------- */
+  .overlay{position:fixed;inset:0;background:rgba(8,6,5,.72);backdrop-filter:blur(3px);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+  .overlay.on{display:flex}
+  .modal{background:var(--ink-2);border:1px solid var(--line);border-radius:18px;max-width:480px;width:100%;padding:26px;box-shadow:var(--shadow)}
+  .modal h2{font-family:"Oswald",sans-serif;text-transform:uppercase;letter-spacing:.05em;font-size:20px;margin:0 0 4px}
+  .modal .sub{color:var(--bone-dim);font-size:13px;margin:0 0 20px}
+  .modal .grp{margin-bottom:16px}
+  .modal label{display:block;font-family:"Oswald",sans-serif;text-transform:uppercase;letter-spacing:.14em;font-size:11px;color:var(--bone-dim);margin-bottom:7px;font-weight:500}
+  .modal input,.modal select{width:100%}
+  .modal .hint{font-size:11.5px;color:var(--bone-faint);margin-top:6px}
+  .modal .hint a{color:var(--amber);text-decoration:none;border-bottom:1px solid rgba(232,163,61,.4)}
+  .modal-actions{display:flex;gap:10px;margin-top:22px}
+  .modal-actions .btn{flex:1;justify-content:center}
+
+  footer{max-width:1280px;margin:0 auto;padding:24px 22px 40px;border-top:1px solid var(--line-2);color:var(--bone-faint);font-size:11.5px;line-height:1.7}
+  footer a{color:var(--bone-dim);text-decoration:none;border-bottom:1px solid var(--line)}
+  .hidden{display:none !important}
+
+  @media (max-width:640px){
+    .marquee-inner{padding:20px 16px}
+    .controls,.statusbar,.grid,footer{padding-left:16px;padding-right:16px}
+    .grid{grid-template-columns:1fr}
+    .toolbar{width:100%}
+    .btn{flex:1;justify-content:center}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none !important;transition:none !important}
+  }
+</style>
+</head>
+<body>
+
+<header class="marquee">
+  <div class="marquee-inner">
+    <div class="brand">
+      <div class="eyebrow">
+        <span class="bulbs"><i></i><i></i><i></i><i></i></span>
+        Bu akşam ne izlesem
+      </div>
+      <h1 class="title">SE<span>A</span>NS</h1>
+      <p class="tagline">Letterboxd izleme listen, Rotten Tomatoes puanı ve nerede izleyebileceğin tek ekranda.</p>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="settingsBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Ayarlar
+      </button>
+      <button class="btn primary" id="uploadBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Watchlist yükle
+      </button>
+      <input type="file" id="fileInput" accept=".csv" class="hidden">
+    </div>
+  </div>
+</header>
+
+<div class="controls" id="controls">
+  <div class="search-wrap">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="quickSearch" placeholder="Tek film ara veya listende süz (ör. Dune)…">
+  </div>
+  <div class="field">
+    <label for="sortSel">Sırala</label>
+    <select id="sortSel">
+      <option value="rt">Rotten Tomatoes ↓</option>
+      <option value="imdb">IMDb ↓</option>
+      <option value="year">Yıl ↓</option>
+      <option value="title">Ad A–Z</option>
+      <option value="orig">Eklenme sırası</option>
+    </select>
+  </div>
+  <button class="chip" id="streamChip" aria-pressed="false"><span class="dot"></span> Sadece izlenebilenler</button>
+  <div class="slider-wrap">
+    <span>RT ≥</span>
+    <input type="range" id="rtMin" min="0" max="100" step="5" value="0">
+    <span class="mono" id="rtMinVal">0</span>
+  </div>
+</div>
+
+<div class="statusbar">
+  <span id="statusText">Başlamak için bir watchlist yükle ya da tek film ara.</span>
+  <div class="progress" id="progress"><i></i></div>
+</div>
+
+<div class="banner err" id="errBanner"></div>
+<div class="banner warn" id="warnBanner"></div>
+
+<div class="empty" id="emptyState">
+  <h2>Üç sekmeyi kapat, tek ekranda topla</h2>
+  <p>Bu site senin izleme akışını taklit eder: listeden seç, puana bak, nerede izleneceğini gör. Çalışması için iki ücretsiz API anahtarı gerekiyor (anahtarlar yalnızca senin tarayıcında saklanır, bu siteye veya GitHub'a yüklenmez).</p>
+  <div class="steps">
+    <div class="step"><div class="n">1</div><div><h3>Ücretsiz anahtarları al ve Ayarlar'a gir</h3><p>Rotten Tomatoes/IMDb puanları için <a href="https://www.omdbapi.com/apikey.aspx" target="_blank" rel="noopener">OMDb</a>, nerede izleneceği (JustWatch verisi) için <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener">TMDB</a>. İkisi de dakikalar içinde alınır.</p></div></div>
+    <div class="step"><div class="n">2</div><div><h3>Letterboxd listeni indir</h3><p>Letterboxd → Settings → <a href="https://letterboxd.com/settings/data/" target="_blank" rel="noopener">Import &amp; Export</a> → "Export your data". İnen ZIP içindeki <span class="mono">watchlist.csv</span> dosyasını "Watchlist yükle" ile seç.</p></div></div>
+    <div class="step"><div class="n">3</div><div><h3>Ya da hızlıca tek film ara</h3><p>Listeyi yüklemeden de üstteki arama kutusuna film adı yazıp Enter'a basarak tek bir filmin puanını ve nerede olduğunu görebilirsin.</p></div></div>
+  </div>
+</div>
+
+<div class="grid hidden" id="grid"></div>
+
+<footer>
+  Veri kaynakları: film bilgisi ve puanlar <a href="https://www.omdbapi.com/" target="_blank" rel="noopener">OMDb API</a>; nerede izlenir verisi <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a> üzerinden <a href="https://www.justwatch.com/" target="_blank" rel="noopener">JustWatch</a> tarafından sağlanır.<br>
+  Bu ürün TMDB API'sini kullanır ancak TMDB tarafından onaylanmamış veya sertifikalandırılmamıştır. İzleme sağlayıcı verilerinin kaynağı JustWatch'tır. Rotten Tomatoes ve IMDb puanları OMDb aracılığıyla gösterilir.
+</footer>
+
+<!-- Ayar modalı -->
+<div class="overlay" id="overlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <h2 id="modalTitle">Ayarlar</h2>
+    <p class="sub">Anahtarlar yalnızca bu tarayıcıda (localStorage) tutulur.</p>
+    <div class="grp">
+      <label for="omdbKey">OMDb API anahtarı</label>
+      <input type="text" id="omdbKey" placeholder="ör. a1b2c3d4" autocomplete="off" spellcheck="false">
+      <div class="hint">Ücretsiz al: <a href="https://www.omdbapi.com/apikey.aspx" target="_blank" rel="noopener">omdbapi.com/apikey.aspx</a> (e-postandaki linki tıklamayı unutma)</div>
+    </div>
+    <div class="grp">
+      <label for="tmdbKey">TMDB API anahtarı (v3 auth)</label>
+      <input type="text" id="tmdbKey" placeholder="ör. 0a1b2c3d4e5f…" autocomplete="off" spellcheck="false">
+      <div class="hint">Ücretsiz al: <a href="https://www.themoviedb.org/settings/api" target="_blank" rel="noopener">themoviedb.org/settings/api</a> ("API Key (v3 auth)")</div>
+    </div>
+    <div class="grp">
+      <label for="regionSel">Bölge (nerede izlenir için)</label>
+      <select id="regionSel">
+        <option value="TR">Türkiye</option>
+        <option value="US">ABD</option>
+        <option value="GB">Birleşik Krallık</option>
+        <option value="DE">Almanya</option>
+        <option value="FR">Fransa</option>
+        <option value="NL">Hollanda</option>
+        <option value="ES">İspanya</option>
+        <option value="IT">İtalya</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" id="clearCacheBtn" title="Kayıtlı puan/sağlayıcı önbelleğini temizler, listeyi yeniden çeker">Önbelleği temizle</button>
+      <button class="btn primary" id="saveSettings">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<script>
+"use strict";
+
+/* ---------- Sızıntısız depolama katmanı (önizlemede localStorage yoksa belleğe düşer) ---------- */
+const store = (() => {
+  let ok = true; const mem = {};
+  try { const k="__seans_t"; localStorage.setItem(k,"1"); localStorage.removeItem(k); }
+  catch(e){ ok = false; }
+  return {
+    get(key){ try{ const v = ok ? localStorage.getItem(key) : mem[key]; return v==null?null:JSON.parse(v); }catch(e){ return null; } },
+    set(key,val){ try{ const s=JSON.stringify(val); if(ok) localStorage.setItem(key,s); else mem[key]=s; }catch(e){} },
+    del(key){ try{ if(ok) localStorage.removeItem(key); else delete mem[key]; }catch(e){} },
+    clearCache(){ try{
+      if(ok){ Object.keys(localStorage).forEach(k=>{ if(k.indexOf("mc:")===0) localStorage.removeItem(k); }); }
+      else { Object.keys(mem).forEach(k=>{ if(k.indexOf("mc:")===0) delete mem[k]; }); }
+    }catch(e){} }
+  };
+})();
+
+/* ---------- Durum ---------- */
+const state = {
+  movies: [],         // {uid,name,year,uri,manual,status,rt,imdb,poster,genre,runtime,tmdbId,providers,watchLink}
+  omdbKey: store.get("omdbKey") || "",
+  tmdbKey: store.get("tmdbKey") || "",
+  region:  store.get("region")  || "TR",
+  fatal: "",
+  filters:{ q:"", sort:"rt", streamOnly:false, rtMin:0 }
+};
+
+/* ---------- Kısayollar ---------- */
+const $ = (s)=>document.querySelector(s);
+const grid = $("#grid");
+const esc = (s)=> String(s==null?"":s).replace(/[&<>"']/g, c=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+
+/* ---------- API yardımcıları ---------- */
+async function getJSON(url){
+  const res = await fetch(url);
+  let data = null;
+  try { data = await res.json(); } catch(e){ data = null; }
+  return { status: res.status, data };
+}
+async function safe(p){ try{ return await p; }catch(e){ return null; } }
+
+function flagKeyError(msg){ if(!state.fatal){ state.fatal = msg; showBanner("err", msg); } }
+
+async function omdbLookup(title, year){
+  const base = "https://www.omdbapi.com/?apikey=" + encodeURIComponent(state.omdbKey);
+  let { data } = await getJSON(base + "&t=" + encodeURIComponent(title) + (year?"&y="+encodeURIComponent(year):"") + "&plot=short");
+  if(data && data.Response==="False"){
+    if(/api key/i.test(data.Error||"")){ flagKeyError("OMDb anahtarı geçersiz görünüyor. Ayarlar'dan kontrol et."); return null; }
+    if(/limit/i.test(data.Error||"")){ flagKeyError("OMDb günlük istek sınırına ulaşıldı (ücretsiz: 1000/gün). Yarın tekrar dene."); return null; }
+    if(year){ const r = await getJSON(base + "&t=" + encodeURIComponent(title) + "&plot=short"); data = r.data; }
+  }
+  return (data && data.Response==="True") ? data : null;
+}
+async function tmdbSearch(title, year){
+  const base = "https://api.themoviedb.org/3/search/movie?api_key=" + encodeURIComponent(state.tmdbKey) + "&include_adult=false&query=" + encodeURIComponent(title);
+  let { status, data } = await getJSON(base + (year?"&year="+encodeURIComponent(year):""));
+  if(status===401){ flagKeyError("TMDB anahtarı geçersiz görünüyor. Ayarlar'dan kontrol et (v3 auth anahtarı)."); return null; }
+  if(data && data.results && data.results.length) return data.results[0];
+  if(year){ const r = await getJSON(base); if(r.data && r.data.results && r.data.results.length) return r.data.results[0]; }
+  return null;
+}
+async function tmdbProviders(id){
+  const { data } = await getJSON("https://api.themoviedb.org/3/movie/" + id + "/watch/providers?api_key=" + encodeURIComponent(state.tmdbKey));
+  return (data && data.results) ? (data.results[state.region] || null) : null;
+}
+
+/* ---------- Tek filmi zenginleştir ---------- */
+function parseRT(omdb){
+  if(!omdb || !Array.isArray(omdb.Ratings)) return null;
+  const r = omdb.Ratings.find(x=>x.Source==="Rotten Tomatoes");
+  if(!r) return null;
+  const n = parseInt(r.Value,10);
+  return isNaN(n)?null:n;
+}
+async function enrichOne(m, force){
+  if(state.fatal) return;
+  m.status = "loading"; updateCard(m);
+  const ck = "mc:" + state.region + ":" + m.name.toLowerCase().trim() + ":" + (m.year||"");
+  if(!force){
+    const c = store.get(ck);
+    if(c){ Object.assign(m, c); m.status="done"; return; }
+  }
+  const [omdb, hit] = await Promise.all([ safe(omdbLookup(m.name, m.year)), safe(tmdbSearch(m.name, m.year)) ]);
+  let providers = null, watchLink = "", tmdbId = null, tmdbPoster = "";
+  if(hit){
+    tmdbId = hit.id;
+    tmdbPoster = hit.poster_path ? ("https://image.tmdb.org/t/p/w342" + hit.poster_path) : "";
+    const prov = await safe(tmdbProviders(hit.id));
+    if(prov){
+      providers = {
+        flatrate: (prov.flatrate||[]).map(p=>({n:p.provider_name, l:"https://image.tmdb.org/t/p/w92"+p.logo_path})),
+        rent:     (prov.rent||[]).map(p=>({n:p.provider_name, l:"https://image.tmdb.org/t/p/w92"+p.logo_path})),
+        buy:      (prov.buy||[]).map(p=>({n:p.provider_name, l:"https://image.tmdb.org/t/p/w92"+p.logo_path}))
+      };
+      watchLink = prov.link || "";
+    } else {
+      providers = { flatrate:[], rent:[], buy:[] };
+    }
+  }
+  const omdbPoster = (omdb && omdb.Poster && omdb.Poster!=="N/A") ? omdb.Poster : "";
+  const payload = {
+    rt: parseRT(omdb),
+    imdb: (omdb && omdb.imdbRating && omdb.imdbRating!=="N/A") ? omdb.imdbRating : null,
+    poster: tmdbPoster || omdbPoster || "",
+    genre: (omdb && omdb.Genre && omdb.Genre!=="N/A") ? omdb.Genre.split(",")[0].trim() : "",
+    runtime: (omdb && omdb.Runtime && omdb.Runtime!=="N/A") ? omdb.Runtime : "",
+    imdbID: (omdb && omdb.imdbID) ? omdb.imdbID : "",
+    resolvedTitle: (omdb && omdb.Title) ? omdb.Title : m.name,
+    tmdbId, providers, watchLink
+  };
+  Object.assign(m, payload);
+  m.status = (omdb || hit) ? "done" : "error";
+  if(m.status==="done") store.set(ck, payload);
+}
+
+/* ---------- Havuzlu zenginleştirme ---------- */
+async function enrichAll(force){
+  const queue = state.movies.filter(m => force || m.status==="new");
+  if(!queue.length){ render(); return; }
+  let done = 0; const total = queue.length; let idx = 0;
+  setProgress(0, total);
+  const worker = async()=>{
+    while(idx < queue.length && !state.fatal){
+      const m = queue[idx++];
+      await enrichOne(m, force);
+      updateCard(m);
+      done++; setProgress(done, total);
+    }
+  };
+  await Promise.all([worker(),worker(),worker(),worker()]);
+  hideProgress();
+  updateStatus();
+  render(); // son sıralamayı uygula
+}
+
+/* ---------- CSV ayrıştırıcı (tırnaklı alanları korur) ---------- */
+function parseCSV(text){
+  text = text.replace(/^\uFEFF/, "");
+  const rows = []; let row = [], val = "", inQ = false;
+  for(let i=0;i<text.length;i++){
+    const c = text[i];
+    if(inQ){
+      if(c==='"'){ if(text[i+1]==='"'){ val+='"'; i++; } else inQ=false; }
+      else val += c;
+    } else {
+      if(c==='"') inQ = true;
+      else if(c===','){ row.push(val); val=""; }
+      else if(c==='\n'){ row.push(val); rows.push(row); row=[]; val=""; }
+      else if(c==='\r'){ /* yoksay */ }
+      else val += c;
+    }
+  }
+  if(val.length || row.length){ row.push(val); rows.push(row); }
+  return rows.filter(r => r.length && r.some(x=>x.trim()!==""));
+}
+function loadWatchlistCSV(text){
+  const rows = parseCSV(text);
+  if(!rows.length) return [];
+  const header = rows[0].map(h=>h.trim().toLowerCase());
+  const iName = header.indexOf("name");
+  const iYear = header.indexOf("year");
+  const iUri  = header.findIndex(h=> h.indexOf("uri")>=0 || h.indexOf("url")>=0);
+  // Başlık beklenildiği gibi değilse, Letterboxd'un standart sırasına düş
+  const out = [];
+  for(let r=1; r<rows.length; r++){
+    const cols = rows[r];
+    const name = (iName>=0 ? cols[iName] : cols[1] || "").trim();
+    const year = (iYear>=0 ? cols[iYear] : cols[2] || "").trim();
+    const uri  = (iUri>=0 ? cols[iUri] : cols[3] || "").trim();
+    if(name) out.push({ name, year, uri });
+  }
+  return out;
+}
+
+/* ---------- Kart oluşturma ---------- */
+const tomatoSVG = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4c-1.2-1.6-3.3-2-3.3-2s.5 1.4 1.7 2.2C8.4 4 6 4.8 4.4 6.8 2.2 9.6 2.4 14 4.8 16.9 7 19.5 9.6 20.5 12 20.5s5-1 7.2-3.6C21.6 14 21.8 9.6 19.6 6.8 18 4.8 15.6 4 13.6 4.2 14.8 3.4 15.3 2 15.3 2S13.2 2.4 12 4z"/></svg>';
+const splatSVG  = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.6 3.1 3.4-1-1 3.4L19 9.6l-2.8 2.1 1.5 3.2-3.5-.5L12 17.5l-2.2-3.1-3.5.5 1.5-3.2L5 9.6l3-1.1-1-3.4 3.4 1L12 2z"/></svg>';
+const imdbSVG   = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm2.5 3v8h2V8h-2zm4 0v8h1.8v-4.6L12.6 16h1.2l1.3-4.6V16H17V8h-2.6l-1 3.7L12.4 8H9.5z"/></svg>';
+
+function provBlock(label, list, flat){
+  if(!list || !list.length) return "";
+  const tagCls = flat ? "tag flat" : "tag";
+  const imgs = list.slice(0,6).map(p=>'<img src="'+esc(p.l)+'" alt="'+esc(p.n)+'" title="'+esc(p.n)+'" loading="lazy">').join("");
+  return '<div class="row"><span class="'+tagCls+'">'+label+'</span><div class="prov">'+imgs+'</div></div>';
+}
+function cardInner(m){
+  if(m.status==="loading" || m.status==="new"){
+    return '<div class="card-top"><div class="poster-wrap"><div class="poster ph">…</div></div>'
+      + '<div class="card-body"><div class="ct-title">'+esc(m.name)+'</div>'
+      + '<div class="ct-meta"><span class="yr">'+esc(m.year||"")+'</span></div></div></div>'
+      + '<div class="skeleton"><div class="spinner"></div></div>';
+  }
+
+  const posterHTML = m.poster
+    ? '<img class="poster" src="'+esc(m.poster)+'" alt="" loading="lazy" onerror="this.outerHTML=\'<div class=&quot;poster ph&quot;>Afiş yok</div>\'">'
+    : '<div class="poster ph">Afiş yok</div>';
+
+  // Puanlar
+  let scores = "";
+  if(typeof m.rt === "number"){
+    const fresh = m.rt >= 60;
+    scores += '<span class="score '+(fresh?"rt-fresh":"rt-rotten")+'" title="Rotten Tomatoes">'+(fresh?tomatoSVG:splatSVG)+m.rt+'%</span>';
+  } else {
+    scores += '<span class="score muted" title="Rotten Tomatoes puanı yok">'+tomatoSVG+'—</span>';
+  }
+  if(m.imdb){
+    scores += '<span class="score imdb" title="IMDb">'+imdbSVG+m.imdb+'<span class="lbl">/10</span></span>';
+  }
+
+  // Nerede izlenir
+  let where = "";
+  const p = m.providers;
+  if(p && (p.flatrate.length || p.rent.length || p.buy.length)){
+    where += provBlock("Abonelik", p.flatrate, true);
+    where += provBlock("Kirala", p.rent, false);
+    where += provBlock("Satın al", p.buy, false);
+  } else {
+    where = '<div class="row"><span class="none">'+esc(state.region)+' bölgesinde dijital olarak bulunamadı</span></div>';
+  }
+
+  // Aksiyonlar
+  const lbHref = m.uri || (m.resolvedTitle ? "https://letterboxd.com/search/"+encodeURIComponent(m.resolvedTitle) : "https://letterboxd.com/");
+  const watchHref = m.watchLink || (m.tmdbId ? "https://www.themoviedb.org/movie/"+m.tmdbId+"/watch?locale="+state.region : "");
+  const meta = [m.year, m.genre, m.runtime].filter(Boolean).map((x,i)=> i===0?'<span class="yr">'+esc(x)+'</span>':'<span>'+esc(x)+'</span>').join('<span>·</span>');
+
+  return '<div class="card-top">'
+    + '<div class="poster-wrap">'+posterHTML+'</div>'
+    + '<div class="card-body">'
+      + '<div class="ct-title">'+esc(m.resolvedTitle||m.name)+'</div>'
+      + '<div class="ct-meta">'+(meta||'<span class="yr">'+esc(m.year||"")+'</span>')+'</div>'
+      + '<div class="scores">'+scores+'</div>'
+      + '<div class="where">'+where+'</div>'
+    + '</div></div>'
+    + '<div class="actions">'
+      + '<a href="'+esc(lbHref)+'" target="_blank" rel="noopener">Letterboxd</a>'
+      + '<a class="watch'+(watchHref?"":" disabled")+'" href="'+esc(watchHref)+'" target="_blank" rel="noopener">'
+        + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg> Nerede izlenir</a>'
+    + '</div>';
+}
+
+/* ---------- Süzme & sıralama ---------- */
+function visibleMovies(){
+  const f = state.filters;
+  let arr = state.movies.slice();
+  if(f.q){
+    const q = f.q.toLowerCase();
+    arr = arr.filter(m => (m.resolvedTitle||m.name).toLowerCase().includes(q) || (m.name).toLowerCase().includes(q));
+  }
+  if(f.streamOnly){
+    arr = arr.filter(m => m.providers && m.providers.flatrate && m.providers.flatrate.length);
+  }
+  if(f.rtMin>0){
+    arr = arr.filter(m => typeof m.rt==="number" && m.rt >= f.rtMin);
+  }
+  const num = (v)=> (typeof v==="number"?v:-1);
+  const imdbN = (v)=> v?parseFloat(v):-1;
+  switch(f.sort){
+    case "rt":    arr.sort((a,b)=> num(b.rt)-num(a.rt) || imdbN(b.imdb)-imdbN(a.imdb)); break;
+    case "imdb":  arr.sort((a,b)=> imdbN(b.imdb)-imdbN(a.imdb)); break;
+    case "year":  arr.sort((a,b)=> (parseInt(b.year)||0)-(parseInt(a.year)||0)); break;
+    case "title": arr.sort((a,b)=> (a.resolvedTitle||a.name).localeCompare(b.resolvedTitle||b.name,"tr")); break;
+    default: break; // orig
+  }
+  return arr;
+}
+function render(){
+  const arr = visibleMovies();
+  $("#emptyState").classList.toggle("hidden", state.movies.length>0);
+  grid.classList.toggle("hidden", state.movies.length===0);
+  grid.innerHTML = arr.map(m =>
+    '<div class="card '+(m.status==="loading"||m.status==="new"?"loading":"")+(m.status==="error"?" error":"")+'" data-uid="'+m.uid+'">'+cardInner(m)+'</div>'
+  ).join("");
+  updateStatus();
+}
+function updateCard(m){
+  const el = grid.querySelector('[data-uid="'+m.uid+'"]');
+  if(!el) return; // o an süzülmüş olabilir
+  el.className = "card "+(m.status==="loading"||m.status==="new"?"loading":"")+(m.status==="error"?" error":"");
+  el.innerHTML = cardInner(m);
+}
+
+/* ---------- Durum & ilerleme ---------- */
+function updateStatus(){
+  const total = state.movies.length;
+  if(!total){ $("#statusText").textContent = "Başlamak için bir watchlist yükle ya da tek film ara."; return; }
+  const loaded = state.movies.filter(m=>m.status==="done"||m.status==="error").length;
+  const vis = visibleMovies().length;
+  let t = total + " film";
+  if(loaded<total) t += " · " + loaded + " yüklendi";
+  if(vis!==total) t += " · " + vis + " gösteriliyor";
+  $("#statusText").textContent = t;
+}
+function setProgress(done,total){
+  const p = $("#progress"); p.classList.add("on");
+  p.querySelector("i").style.width = (total? Math.round(done/total*100):0)+"%";
+}
+function hideProgress(){ $("#progress").classList.remove("on"); }
+function showBanner(type,msg){
+  const b = type==="err" ? $("#errBanner") : $("#warnBanner");
+  b.textContent = msg; b.classList.add("on");
+}
+function hideBanners(){ $("#errBanner").classList.remove("on"); $("#warnBanner").classList.remove("on"); state.fatal=""; }
+
+/* ---------- Anahtar kontrolü ---------- */
+function keysReady(){
+  if(!state.omdbKey || !state.tmdbKey){
+    openSettings();
+    showBanner("warn", "Devam etmek için OMDb ve TMDB anahtarlarını gir (ücretsiz).");
+    return false;
+  }
+  return true;
+}
+
+/* ---------- Olaylar ---------- */
+let uidCounter = 0;
+function addMovies(list, manual){
+  const start = state.movies.length;
+  list.forEach(it=>{
+    state.movies.push({ uid:"m"+(uidCounter++), name:it.name, year:it.year||"", uri:it.uri||"", manual:!!manual, status:"new" });
+  });
+  render();
+  return start;
+}
+
+$("#uploadBtn").addEventListener("click", ()=>{ if(keysReady()) $("#fileInput").click(); });
+$("#fileInput").addEventListener("change", (e)=>{
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = async()=>{
+    hideBanners();
+    const list = loadWatchlistCSV(String(reader.result||""));
+    if(!list.length){ showBanner("err","CSV okunamadı. Letterboxd'un watchlist.csv dosyasını yüklediğinden emin ol."); return; }
+    addMovies(list,false);
+    await enrichAll(false);
+  };
+  reader.readAsText(file);
+  e.target.value = "";
+});
+
+let searchTimer;
+$("#quickSearch").addEventListener("input", (e)=>{
+  state.filters.q = e.target.value.trim();
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(render, 160);
+});
+$("#quickSearch").addEventListener("keydown", async (e)=>{
+  if(e.key!=="Enter") return;
+  const q = e.target.value.trim(); if(!q) return;
+  if(!keysReady()) return;
+  // Listede zaten varsa sadece süz; yoksa tek film olarak ekle
+  const exists = state.movies.some(m => (m.resolvedTitle||m.name).toLowerCase()===q.toLowerCase());
+  if(exists){ state.filters.q=q; render(); return; }
+  hideBanners();
+  state.filters.q = "";              // yeni eklenen görünsün
+  e.target.value = "";
+  const start = addMovies([{name:q,year:"",uri:""}], true);
+  await enrichOne(state.movies[start], false);
+  updateCard(state.movies[start]);
+  render();
+});
+
+$("#sortSel").addEventListener("change", e=>{ state.filters.sort=e.target.value; render(); });
+$("#streamChip").addEventListener("click", e=>{
+  state.filters.streamOnly = !state.filters.streamOnly;
+  e.currentTarget.setAttribute("aria-pressed", state.filters.streamOnly);
+  render();
+});
+$("#rtMin").addEventListener("input", e=>{
+  state.filters.rtMin = parseInt(e.target.value,10);
+  $("#rtMinVal").textContent = e.target.value;
+  render();
+});
+
+/* ---------- Ayarlar ---------- */
+function openSettings(){
+  $("#omdbKey").value = state.omdbKey;
+  $("#tmdbKey").value = state.tmdbKey;
+  $("#regionSel").value = state.region;
+  $("#overlay").classList.add("on");
+}
+function closeSettings(){ $("#overlay").classList.remove("on"); }
+$("#settingsBtn").addEventListener("click", openSettings);
+$("#overlay").addEventListener("click", e=>{ if(e.target.id==="overlay") closeSettings(); });
+document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeSettings(); });
+
+$("#saveSettings").addEventListener("click", async ()=>{
+  const oldRegion = state.region;
+  state.omdbKey = $("#omdbKey").value.trim();
+  state.tmdbKey = $("#tmdbKey").value.trim();
+  state.region  = $("#regionSel").value;
+  store.set("omdbKey", state.omdbKey);
+  store.set("tmdbKey", state.tmdbKey);
+  store.set("region",  state.region);
+  hideBanners();
+  closeSettings();
+  // Bölge değiştiyse sağlayıcılar farklı olacağından yeniden çek
+  if(state.region!==oldRegion && state.movies.length){
+    state.movies.forEach(m=>{ m.status="new"; });
+    await enrichAll(true);
+  }
+});
+$("#clearCacheBtn").addEventListener("click", async ()=>{
+  store.clearCache();
+  if(state.movies.length){
+    state.movies.forEach(m=>{ m.status="new"; });
+    closeSettings(); hideBanners();
+    await enrichAll(true);
+  } else {
+    showBanner("warn","Önbellek temizlendi.");
+  }
+});
+
+/* ---------- İlk açılış ---------- */
+$("#rtMinVal").textContent = "0";
+render();
+if(!state.omdbKey || !state.tmdbKey){
+  // Anahtar yoksa kullanıcıyı boş durum yönlendirir; modalı zorlamıyoruz.
+}
+</script>
+</body>
+</html>
