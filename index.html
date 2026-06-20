@@ -182,6 +182,10 @@
   .where .tag.flat{color:var(--stream)}
   .prov{display:flex;gap:6px;flex-wrap:wrap}
   .prov img{width:26px;height:26px;border-radius:6px;object-fit:cover;border:1px solid var(--line);background:var(--ink-2)}
+  .prov a{display:inline-flex;line-height:0;border-radius:6px;transition:transform .12s}
+  .prov a:hover{transform:translateY(-2px)}
+  .prov a:hover img{border-color:var(--amber)}
+  .chip svg{width:14px;height:14px}
   .where .none{font-size:12px;color:var(--bone-faint);font-style:italic}
 
   .actions{display:flex;gap:8px;border-top:1px solid var(--line-2);padding:11px 15px;background:rgba(0,0,0,.12)}
@@ -214,6 +218,46 @@
   .modal-actions{display:flex;gap:10px;margin-top:22px}
   .modal-actions .btn{flex:1;justify-content:center}
 
+  /* ---------- Karar rozeti & kaydırma modu ---------- */
+  .decided-badge{position:absolute;top:8px;left:8px;z-index:2;background:rgba(116,176,138,.92);color:#10211a;font-family:"Oswald",sans-serif;text-transform:uppercase;letter-spacing:.05em;font-size:10px;font-weight:700;padding:4px 8px;border-radius:7px}
+  body.swipe-on{overflow:hidden}
+  .swipe-stage{position:fixed;inset:0;z-index:45;display:none;flex-direction:column;
+    background:radial-gradient(900px 500px at 50% -10%, rgba(232,163,61,.09), transparent 60%), var(--ink)}
+  .swipe-stage.on{display:flex}
+  .swipe-top{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line)}
+  .swipe-count{font-family:"Oswald",sans-serif;text-transform:uppercase;letter-spacing:.13em;font-size:12px;color:var(--bone-dim)}
+  .swipe-count span{color:var(--stream);font-family:"Space Mono",monospace;font-weight:700}
+  .swipe-area{flex:1;display:flex;align-items:center;justify-content:center;position:relative;padding:18px;overflow:hidden}
+  .swipe-empty{color:var(--bone-dim);text-align:center;max-width:32ch;font-size:14px}
+  .scard{position:relative;width:min(94vw,400px);height:min(76vh,620px);background:var(--card);border:1px solid var(--line);
+    border-radius:20px;overflow:hidden;box-shadow:0 30px 70px -25px rgba(0,0,0,.85);display:flex;flex-direction:column;
+    will-change:transform;touch-action:pan-y;user-select:none;-webkit-user-select:none;cursor:grab}
+  .scard:active{cursor:grabbing}
+  .scard-poster{position:relative;height:46%;min-height:190px;flex:0 0 auto;background-size:cover;background-position:center top;background-color:var(--ink-2)}
+  .scard-poster .grad{position:absolute;inset:0;background:linear-gradient(180deg, rgba(20,17,14,0) 30%, rgba(20,17,14,.4) 68%, var(--card) 100%)}
+  .scard-headline{position:absolute;left:0;right:0;bottom:0;padding:16px 18px}
+  .scard-headline h2{font-family:"Oswald",sans-serif;font-weight:700;font-size:25px;line-height:1.05;margin:0;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.7)}
+  .scard-headline h2 .yr{color:#d8cdb8;font-weight:500;font-size:18px}
+  .scard-genres{margin-top:6px;font-size:12px;color:#cdbfa6;font-family:"Space Mono",monospace}
+  .scard-body{flex:1;overflow:auto;padding:14px 18px 18px;display:flex;flex-direction:column;gap:13px}
+  .scard-body .scores{display:flex;gap:8px;flex-wrap:wrap}
+  .scard-plot{font-size:13.5px;line-height:1.55;color:var(--bone);margin:0}
+  .scard-cast{font-size:12.5px;color:var(--bone-dim);line-height:1.5}
+  .scard-cast .k{font-family:"Oswald",sans-serif;text-transform:uppercase;letter-spacing:.12em;font-size:9.5px;color:var(--bone-faint);display:block;margin-bottom:3px}
+  .scard .where{border-top:1px solid var(--line-2);padding-top:11px;display:flex;flex-direction:column;gap:8px;margin-top:auto}
+  .scard-stamp{position:absolute;top:20px;z-index:3;padding:5px 14px;border:3px solid;border-radius:10px;opacity:0;pointer-events:none;
+    font-family:"Oswald",sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:21px}
+  .scard-stamp.like{right:18px;color:var(--stream);border-color:var(--stream);transform:rotate(12deg)}
+  .scard-stamp.nope{left:18px;color:var(--tomato);border-color:var(--tomato);transform:rotate(-12deg)}
+  .swipe-actions{display:flex;gap:26px;justify-content:center;padding:14px}
+  .swipe-btn{width:62px;height:62px;border-radius:50%;border:1px solid var(--line);background:var(--ink-2);color:var(--bone);
+    display:flex;align-items:center;justify-content:center;transition:transform .12s,border-color .12s,background .12s}
+  .swipe-btn svg{width:26px;height:26px}
+  .swipe-btn:hover{transform:translateY(-2px)}
+  .swipe-btn.skip{color:var(--tomato)} .swipe-btn.skip:hover{border-color:var(--tomato);background:rgba(229,82,59,.12)}
+  .swipe-btn.watch{color:var(--stream)} .swipe-btn.watch:hover{border-color:var(--stream);background:rgba(116,176,138,.12)}
+  .swipe-help{text-align:center;color:var(--bone-faint);font-size:11.5px;padding:0 16px 18px}
+
   footer{max-width:1280px;margin:0 auto;padding:24px 22px 40px;border-top:1px solid var(--line-2);color:var(--bone-faint);font-size:11.5px;line-height:1.7}
   footer a{color:var(--bone-dim);text-decoration:none;border-bottom:1px solid var(--line)}
   .hidden{display:none !important}
@@ -243,6 +287,10 @@
       <p class="tagline">Letterboxd izleme listen, Rotten Tomatoes puanı ve nerede izleyebileceğin tek ekranda.</p>
     </div>
     <div class="toolbar">
+      <button class="btn" id="swipeOpenBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="14" height="16" rx="2"/><path d="M17 7l4 1.5v9L17 19"/></svg>
+        Keşfet
+      </button>
       <button class="btn" id="settingsBtn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         Ayarlar
@@ -268,10 +316,17 @@
       <option value="imdb">IMDb ↓</option>
       <option value="year">Yıl ↓</option>
       <option value="title">Ad A–Z</option>
+      <option value="random">Rastgele</option>
       <option value="orig">Eklenme sırası</option>
     </select>
   </div>
+  <div class="field">
+    <label for="genreSel">Tür</label>
+    <select id="genreSel"><option value="">Tüm türler</option></select>
+  </div>
   <button class="chip" id="streamChip" aria-pressed="false"><span class="dot"></span> Sadece izlenebilenler</button>
+  <button class="chip" id="shuffleBtn" title="Filmleri rastgele sırala"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg> Karıştır</button>
+  <button class="chip" id="decidedChip" aria-pressed="false"><span class="dot"></span> İzleyeceklerim</button>
   <div class="slider-wrap">
     <span>RT ≥</span>
     <input type="range" id="rtMin" min="0" max="100" step="5" value="0">
@@ -303,6 +358,29 @@
   Veri kaynakları: film bilgisi ve puanlar <a href="https://www.omdbapi.com/" target="_blank" rel="noopener">OMDb API</a>; nerede izlenir verisi <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a> üzerinden <a href="https://www.justwatch.com/" target="_blank" rel="noopener">JustWatch</a> tarafından sağlanır.<br>
   Bu ürün TMDB API'sini kullanır ancak TMDB tarafından onaylanmamış veya sertifikalandırılmamıştır. İzleme sağlayıcı verilerinin kaynağı JustWatch'tır. Rotten Tomatoes ve IMDb puanları OMDb aracılığıyla gösterilir.
 </footer>
+
+<!-- Kaydırmalı keşif modu -->
+<div class="swipe-stage" id="swipeStage" aria-hidden="true">
+  <div class="swipe-top">
+    <button class="btn" id="swipeClose">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Izgaraya dön
+    </button>
+    <div class="swipe-count">İzleyeceğim · <span id="decidedCount">0</span></div>
+  </div>
+  <div class="swipe-area" id="swipeArea">
+    <div class="swipe-empty" id="swipeEmpty" hidden>Önce bir watchlist yükle ve puanların yüklenmesini bekle.</div>
+  </div>
+  <div class="swipe-actions">
+    <button class="swipe-btn skip" id="btnSkip" title="Atla (←)" aria-label="Atla">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <button class="swipe-btn watch" id="btnWatch" title="İzleyeceğim (→)" aria-label="İzleyeceğim">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+    </button>
+  </div>
+  <div class="swipe-help">← Atla &nbsp;·&nbsp; İzleyeceğim → &nbsp;·&nbsp; sürükle veya ok tuşları</div>
+</div>
 
 <!-- Ayar modalı -->
 <div class="overlay" id="overlay">
@@ -352,8 +430,8 @@ const store = (() => {
     set(key,val){ try{ const s=JSON.stringify(val); if(ok) localStorage.setItem(key,s); else mem[key]=s; }catch(e){} },
     del(key){ try{ if(ok) localStorage.removeItem(key); else delete mem[key]; }catch(e){} },
     clearCache(){ try{
-      if(ok){ Object.keys(localStorage).forEach(k=>{ if(k.indexOf("mc:")===0) localStorage.removeItem(k); }); }
-      else { Object.keys(mem).forEach(k=>{ if(k.indexOf("mc:")===0) delete mem[k]; }); }
+      if(ok){ Object.keys(localStorage).forEach(k=>{ if(k.indexOf("mc")===0) localStorage.removeItem(k); }); }
+      else { Object.keys(mem).forEach(k=>{ if(k.indexOf("mc")===0) delete mem[k]; }); }
     }catch(e){} }
   };
 })();
@@ -365,7 +443,7 @@ const state = {
   tmdbKey: store.get("tmdbKey") || "",
   region:  store.get("region")  || "TR",
   fatal: "",
-  filters:{ q:"", sort:"rt", streamOnly:false, rtMin:0 }
+  filters:{ q:"", sort:"rt", streamOnly:false, decidedOnly:false, genre:"", rtMin:0 }
 };
 
 /* ---------- Kısayollar ---------- */
@@ -418,7 +496,7 @@ function parseRT(omdb){
 async function enrichOne(m, force){
   if(state.fatal) return;
   m.status = "loading"; updateCard(m);
-  const ck = "mc:" + state.region + ":" + m.name.toLowerCase().trim() + ":" + (m.year||"");
+  const ck = "mc2:" + state.region + ":" + m.name.toLowerCase().trim() + ":" + (m.year||"");
   if(!force){
     const c = store.get(ck);
     if(c){ Object.assign(m, c); m.status="done"; return; }
@@ -446,6 +524,9 @@ async function enrichOne(m, force){
     imdb: (omdb && omdb.imdbRating && omdb.imdbRating!=="N/A") ? omdb.imdbRating : null,
     poster: tmdbPoster || omdbPoster || "",
     genre: (omdb && omdb.Genre && omdb.Genre!=="N/A") ? omdb.Genre.split(",")[0].trim() : "",
+    genres: (omdb && omdb.Genre && omdb.Genre!=="N/A") ? omdb.Genre : "",
+    plot: (omdb && omdb.Plot && omdb.Plot!=="N/A") ? omdb.Plot : "",
+    actors: (omdb && omdb.Actors && omdb.Actors!=="N/A") ? omdb.Actors : "",
     runtime: (omdb && omdb.Runtime && omdb.Runtime!=="N/A") ? omdb.Runtime : "",
     imdbID: (omdb && omdb.imdbID) ? omdb.imdbID : "",
     resolvedTitle: (omdb && omdb.Title) ? omdb.Title : m.name,
@@ -474,6 +555,7 @@ async function enrichAll(force){
   hideProgress();
   updateStatus();
   render(); // son sıralamayı uygula
+  saveWatchlist();
 }
 
 /* ---------- CSV ayrıştırıcı (tırnaklı alanları korur) ---------- */
@@ -520,54 +602,73 @@ const tomatoSVG = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4c-
 const splatSVG  = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.6 3.1 3.4-1-1 3.4L19 9.6l-2.8 2.1 1.5 3.2-3.5-.5L12 17.5l-2.2-3.1-3.5.5 1.5-3.2L5 9.6l3-1.1-1-3.4 3.4 1L12 2z"/></svg>';
 const imdbSVG   = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm2.5 3v8h2V8h-2zm4 0v8h1.8v-4.6L12.6 16h1.2l1.3-4.6V16H17V8h-2.6l-1 3.7L12.4 8H9.5z"/></svg>';
 
-function provBlock(label, list, flat){
+function providerUrl(name, title){
+  const q = encodeURIComponent(title||"");
+  const n = (name||"").toLowerCase();
+  if(n.includes("netflix"))      return "https://www.netflix.com/search?q="+q;
+  if(n.includes("youtube"))      return "https://www.youtube.com/results?search_query="+q;
+  if(n.includes("google play"))  return "https://play.google.com/store/search?q="+q+"&c=movies";
+  if(n.includes("apple"))        return "https://tv.apple.com/search?term="+q;
+  if(n.includes("mubi"))         return "https://mubi.com/en/search/films?query="+q;
+  if(n.includes("prime")||n.includes("amazon")) return "https://www.primevideo.com/search/ref=atv_nb_sr?phrase="+q;
+  if(n.includes("disney"))       return "https://www.disneyplus.com/search?q="+q;
+  // Bilinmeyen servisler için her zaman çalışan yedek: filmi servis adıyla web'de ara
+  return "https://www.google.com/search?q="+encodeURIComponent((title||"")+" "+(name||"")+" izle");
+}
+function provBlock(label, list, flat, title){
   if(!list || !list.length) return "";
   const tagCls = flat ? "tag flat" : "tag";
-  const imgs = list.slice(0,6).map(p=>'<img src="'+esc(p.l)+'" alt="'+esc(p.n)+'" title="'+esc(p.n)+'" loading="lazy">').join("");
+  const imgs = list.slice(0,8).map(p=>
+    '<a href="'+esc(providerUrl(p.n,title))+'" target="_blank" rel="noopener" title="'+esc(p.n)+' sayfasında ara"><img src="'+esc(p.l)+'" alt="'+esc(p.n)+'" loading="lazy"></a>'
+  ).join("");
   return '<div class="row"><span class="'+tagCls+'">'+label+'</span><div class="prov">'+imgs+'</div></div>';
+}
+function scoreBadges(m){
+  let s = "";
+  if(typeof m.rt === "number"){
+    const fresh = m.rt >= 60;
+    s += '<span class="score '+(fresh?"rt-fresh":"rt-rotten")+'" title="Rotten Tomatoes">'+(fresh?tomatoSVG:splatSVG)+m.rt+'%</span>';
+  } else {
+    s += '<span class="score muted" title="Rotten Tomatoes puanı yok">'+tomatoSVG+'—</span>';
+  }
+  if(m.imdb){
+    s += '<span class="score imdb" title="IMDb">'+imdbSVG+m.imdb+'<span class="lbl">/10</span></span>';
+  }
+  return s;
+}
+function whereBlock(m){
+  const p = m.providers;
+  if(p && (p.flatrate.length || p.rent.length || p.buy.length)){
+    const t = m.resolvedTitle||m.name;
+    return provBlock("Abonelik", p.flatrate, true, t)
+         + provBlock("Kirala", p.rent, false, t)
+         + provBlock("Satın al", p.buy, false, t);
+  }
+  return '<div class="row"><span class="none">'+esc(state.region)+' bölgesinde dijital olarak bulunamadı</span></div>';
 }
 function cardInner(m){
   if(m.status==="loading" || m.status==="new"){
     return '<div class="card-top"><div class="poster-wrap"><div class="poster ph">…</div></div>'
       + '<div class="card-body"><div class="ct-title">'+esc(m.name)+'</div>'
       + '<div class="ct-meta"><span class="yr">'+esc(m.year||"")+'</span></div></div></div>'
-      + '<div class="skeleton"><div class="spinner"></div></div>';
+      + (m.status==="loading" ? '<div class="skeleton"><div class="spinner"></div></div>' : '');
   }
 
   const posterHTML = m.poster
     ? '<img class="poster" src="'+esc(m.poster)+'" alt="" loading="lazy" onerror="this.outerHTML=\'<div class=&quot;poster ph&quot;>Afiş yok</div>\'">'
     : '<div class="poster ph">Afiş yok</div>';
 
-  // Puanlar
-  let scores = "";
-  if(typeof m.rt === "number"){
-    const fresh = m.rt >= 60;
-    scores += '<span class="score '+(fresh?"rt-fresh":"rt-rotten")+'" title="Rotten Tomatoes">'+(fresh?tomatoSVG:splatSVG)+m.rt+'%</span>';
-  } else {
-    scores += '<span class="score muted" title="Rotten Tomatoes puanı yok">'+tomatoSVG+'—</span>';
-  }
-  if(m.imdb){
-    scores += '<span class="score imdb" title="IMDb">'+imdbSVG+m.imdb+'<span class="lbl">/10</span></span>';
-  }
-
-  // Nerede izlenir
-  let where = "";
-  const p = m.providers;
-  if(p && (p.flatrate.length || p.rent.length || p.buy.length)){
-    where += provBlock("Abonelik", p.flatrate, true);
-    where += provBlock("Kirala", p.rent, false);
-    where += provBlock("Satın al", p.buy, false);
-  } else {
-    where = '<div class="row"><span class="none">'+esc(state.region)+' bölgesinde dijital olarak bulunamadı</span></div>';
-  }
+  const scores = scoreBadges(m);
+  const where = whereBlock(m);
 
   // Aksiyonlar
   const lbHref = m.uri || (m.resolvedTitle ? "https://letterboxd.com/search/"+encodeURIComponent(m.resolvedTitle) : "https://letterboxd.com/");
   const watchHref = m.watchLink || (m.tmdbId ? "https://www.themoviedb.org/movie/"+m.tmdbId+"/watch?locale="+state.region : "");
   const meta = [m.year, m.genre, m.runtime].filter(Boolean).map((x,i)=> i===0?'<span class="yr">'+esc(x)+'</span>':'<span>'+esc(x)+'</span>').join('<span>·</span>');
+  const badge = m.decided ? '<div class="decided-badge">✓ İzleyeceğim</div>' : '';
 
   return '<div class="card-top">'
-    + '<div class="poster-wrap">'+posterHTML+'</div>'
+    + '<div class="poster-wrap">'+posterHTML+badge+'</div>'
     + '<div class="card-body">'
       + '<div class="ct-title">'+esc(m.resolvedTitle||m.name)+'</div>'
       + '<div class="ct-meta">'+(meta||'<span class="yr">'+esc(m.year||"")+'</span>')+'</div>'
@@ -592,6 +693,12 @@ function visibleMovies(){
   if(f.streamOnly){
     arr = arr.filter(m => m.providers && m.providers.flatrate && m.providers.flatrate.length);
   }
+  if(f.decidedOnly){
+    arr = arr.filter(m => m.decided);
+  }
+  if(f.genre){
+    arr = arr.filter(m => (m.genres||m.genre||"").split(",").map(x=>x.trim()).includes(f.genre));
+  }
   if(f.rtMin>0){
     arr = arr.filter(m => typeof m.rt==="number" && m.rt >= f.rtMin);
   }
@@ -602,11 +709,13 @@ function visibleMovies(){
     case "imdb":  arr.sort((a,b)=> imdbN(b.imdb)-imdbN(a.imdb)); break;
     case "year":  arr.sort((a,b)=> (parseInt(b.year)||0)-(parseInt(a.year)||0)); break;
     case "title": arr.sort((a,b)=> (a.resolvedTitle||a.name).localeCompare(b.resolvedTitle||b.name,"tr")); break;
+    case "random": arr.sort((a,b)=> (a.rand||0)-(b.rand||0)); break;
     default: break; // orig
   }
   return arr;
 }
 function render(){
+  populateGenres();
   const arr = visibleMovies();
   $("#emptyState").classList.toggle("hidden", state.movies.length>0);
   grid.classList.toggle("hidden", state.movies.length===0);
@@ -620,6 +729,30 @@ function updateCard(m){
   if(!el) return; // o an süzülmüş olabilir
   el.className = "card "+(m.status==="loading"||m.status==="new"?"loading":"")+(m.status==="error"?" error":"");
   el.innerHTML = cardInner(m);
+}
+function shuffle(){ state.movies.forEach(m=> m.rand = Math.random()); }
+
+const GENRE_TR = {
+  "Action":"Aksiyon","Adventure":"Macera","Animation":"Animasyon","Biography":"Biyografi",
+  "Comedy":"Komedi","Crime":"Suç","Documentary":"Belgesel","Drama":"Dram","Family":"Aile",
+  "Fantasy":"Fantastik","Film-Noir":"Kara Film","History":"Tarih","Horror":"Korku","Music":"Müzik",
+  "Musical":"Müzikal","Mystery":"Gizem","Romance":"Romantik","Sci-Fi":"Bilim Kurgu","Short":"Kısa",
+  "Sport":"Spor","Thriller":"Gerilim","War":"Savaş","Western":"Western"
+};
+let genreSig = "";
+function populateGenres(){
+  const set = new Set();
+  state.movies.forEach(m=>{ (m.genres||m.genre||"").split(",").forEach(g=>{ g=g.trim(); if(g) set.add(g); }); });
+  const list = Array.from(set).sort((a,b)=> (GENRE_TR[a]||a).localeCompare(GENRE_TR[b]||b,"tr"));
+  const sig = list.join("|");
+  if(sig===genreSig) return;            // tür listesi değişmediyse menüye dokunma
+  genreSig = sig;
+  const sel = $("#genreSel");
+  const cur = state.filters.genre;
+  sel.innerHTML = '<option value="">Tüm türler</option>' +
+    list.map(g=>'<option value="'+esc(g)+'">'+esc(GENRE_TR[g]||g)+'</option>').join("");
+  if(cur && !list.includes(cur)){ state.filters.genre = ""; }
+  sel.value = state.filters.genre;
 }
 
 /* ---------- Durum & ilerleme ---------- */
@@ -655,6 +788,21 @@ function keysReady(){
 }
 
 /* ---------- Olaylar ---------- */
+const WKEY = "watchlist:v1";
+function saveWatchlist(){ store.set(WKEY, state.movies); }
+function restoreWatchlist(){
+  const saved = store.get(WKEY);
+  if(!Array.isArray(saved) || !saved.length) return;
+  state.movies = saved.map(m=>{
+    // Eski kayıtlarda özet/oyuncu yoksa yeniden çekilsin
+    if(m.status==="done" && m.plot===undefined) m.status="new";
+    if(m.status!=="done" && m.status!=="error") m.status="new";
+    return m;
+  });
+  let mx = 0;
+  state.movies.forEach(m=>{ const num = parseInt(String(m.uid).replace(/\D/g,""),10); if(!isNaN(num) && num>=mx) mx = num+1; });
+  uidCounter = mx;
+}
 let uidCounter = 0;
 function addMovies(list, manual){
   const start = state.movies.length;
@@ -662,6 +810,7 @@ function addMovies(list, manual){
     state.movies.push({ uid:"m"+(uidCounter++), name:it.name, year:it.year||"", uri:it.uri||"", manual:!!manual, status:"new" });
   });
   render();
+  saveWatchlist();
   return start;
 }
 
@@ -673,6 +822,7 @@ $("#fileInput").addEventListener("change", (e)=>{
     hideBanners();
     const list = loadWatchlistCSV(String(reader.result||""));
     if(!list.length){ showBanner("err","CSV okunamadı. Letterboxd'un watchlist.csv dosyasını yüklediğinden emin ol."); return; }
+    state.movies = [];               // yeni liste eskisinin yerini alır
     addMovies(list,false);
     await enrichAll(false);
   };
@@ -700,9 +850,12 @@ $("#quickSearch").addEventListener("keydown", async (e)=>{
   await enrichOne(state.movies[start], false);
   updateCard(state.movies[start]);
   render();
+  saveWatchlist();
 });
 
-$("#sortSel").addEventListener("change", e=>{ state.filters.sort=e.target.value; render(); });
+$("#sortSel").addEventListener("change", e=>{ state.filters.sort=e.target.value; if(e.target.value==="random") shuffle(); render(); });
+$("#genreSel").addEventListener("change", e=>{ state.filters.genre=e.target.value; render(); });
+$("#shuffleBtn").addEventListener("click", ()=>{ state.filters.sort="random"; $("#sortSel").value="random"; shuffle(); render(); });
 $("#streamChip").addEventListener("click", e=>{
   state.filters.streamOnly = !state.filters.streamOnly;
   e.currentTarget.setAttribute("aria-pressed", state.filters.streamOnly);
@@ -753,11 +906,138 @@ $("#clearCacheBtn").addEventListener("click", async ()=>{
   }
 });
 
+/* ---------- Kaydırmalı keşif modu ---------- */
+const swipe = { active:false, current:null, seen:new Set(), card:null, dragging:false, startX:0, dx:0 };
+function decidedTotal(){ return state.movies.filter(m=>m.decided).length; }
+function updateDecidedCount(){ $("#decidedCount").textContent = decidedTotal(); }
+function swipePool(){ return state.movies.filter(m=> m.status==="done"); }
+
+function openSwipe(){
+  document.body.classList.add("swipe-on");
+  $("#swipeStage").classList.add("on");
+  $("#swipeStage").setAttribute("aria-hidden","false");
+  swipe.active = true; swipe.seen = new Set(); swipe.current = null;
+  updateDecidedCount();
+  const pool = swipePool();
+  if(!pool.length){
+    $("#swipeEmpty").hidden = false;
+    if(swipe.card){ swipe.card.remove(); swipe.card = null; }
+    return;
+  }
+  $("#swipeEmpty").hidden = true;
+  nextCard();
+}
+function closeSwipe(){
+  swipe.active = false;
+  $("#swipeStage").classList.remove("on");
+  $("#swipeStage").setAttribute("aria-hidden","true");
+  document.body.classList.remove("swipe-on");
+  render(); // ızgaradaki "İzleyeceğim" rozetleri güncellensin
+}
+function pickNext(){
+  const pool = swipePool();
+  if(!pool.length) return null;
+  let cand = pool.filter(m=> !swipe.seen.has(m.uid));
+  if(!cand.length){ swipe.seen.clear(); cand = pool.slice(); }
+  if(cand.length>1 && swipe.current){ cand = cand.filter(m=> m.uid!==swipe.current.uid); }
+  return cand[Math.floor(Math.random()*cand.length)];
+}
+function nextCard(){
+  const m = pickNext();
+  if(!m){ $("#swipeEmpty").hidden = false; if(swipe.card){ swipe.card.remove(); swipe.card=null; } return; }
+  swipe.current = m; swipe.seen.add(m.uid);
+  renderSwipeCard(m);
+}
+function renderSwipeCard(m){
+  if(swipe.card) swipe.card.remove();
+  const el = document.createElement("div");
+  el.className = "scard";
+  const title = esc(m.resolvedTitle||m.name);
+  const yr = m.year ? ' <span class="yr">('+esc(m.year)+')</span>' : "";
+  const genreLine = [m.genres||m.genre, m.runtime].filter(Boolean).map(esc).join(" · ");
+  const posterStyle = m.poster ? ' style="background-image:url('+esc(m.poster)+')"' : '';
+  const plot = m.plot ? '<p class="scard-plot">'+esc(m.plot)+'</p>' : '';
+  const cast = m.actors ? '<div class="scard-cast"><span class="k">Başroller</span>'+esc(m.actors)+'</div>' : '';
+  el.innerHTML =
+      '<div class="scard-stamp like">İzleyeceğim</div>'
+    + '<div class="scard-stamp nope">Atla</div>'
+    + '<div class="scard-poster"'+posterStyle+'><div class="grad"></div>'
+      + '<div class="scard-headline"><h2>'+title+yr+'</h2>'
+      + (genreLine?'<div class="scard-genres">'+genreLine+'</div>':'') + '</div></div>'
+    + '<div class="scard-body">'
+      + '<div class="scores">'+scoreBadges(m)+'</div>'
+      + plot + cast
+      + '<div class="where">'+whereBlock(m)+'</div>'
+    + '</div>';
+  $("#swipeArea").appendChild(el);
+  swipe.card = el;
+  attachDrag(el);
+  if(el.animate){ el.animate([{opacity:0, transform:'scale(.96)'},{opacity:1, transform:'none'}], {duration:160, easing:'ease-out'}); }
+}
+function setStamps(dx){
+  if(!swipe.card) return;
+  const like = swipe.card.querySelector(".scard-stamp.like");
+  const nope = swipe.card.querySelector(".scard-stamp.nope");
+  if(like) like.style.opacity = dx>0 ? Math.min(dx/120,1) : 0;
+  if(nope) nope.style.opacity = dx<0 ? Math.min(-dx/120,1) : 0;
+}
+function attachDrag(el){
+  el.addEventListener("pointerdown", e=>{
+    if(e.target.closest("a, button")) return; // sağlayıcı linkleri tıklanabilsin
+    swipe.dragging = true; swipe.startX = e.clientX; swipe.dx = 0;
+    el.style.transition = "none";
+    try{ el.setPointerCapture(e.pointerId); }catch(_){}
+  });
+  el.addEventListener("pointermove", e=>{
+    if(!swipe.dragging) return;
+    swipe.dx = e.clientX - swipe.startX;
+    el.style.transform = "translateX("+swipe.dx+"px) rotate("+(swipe.dx/22)+"deg)";
+    setStamps(swipe.dx);
+  });
+  const end = ()=>{
+    if(!swipe.dragging) return;
+    swipe.dragging = false;
+    el.style.transition = "transform .32s ease";
+    if(swipe.dx > 120) commit("right");
+    else if(swipe.dx < -120) commit("left");
+    else { el.style.transform = ""; setStamps(0); }
+  };
+  el.addEventListener("pointerup", end);
+  el.addEventListener("pointercancel", end);
+}
+function commit(dir){
+  const el = swipe.card; if(!el) return;
+  const off = (dir==="right" ? window.innerWidth : -window.innerWidth) * 1.1;
+  el.style.transition = "transform .32s ease";
+  el.style.transform = "translateX("+off+"px) rotate("+(dir==="right"?22:-22)+"deg)";
+  setStamps(dir==="right"?130:-130);
+  if(dir==="right" && swipe.current){ swipe.current.decided = true; saveWatchlist(); updateDecidedCount(); }
+  setTimeout(nextCard, 300);
+}
+function swipeAction(dir){ if(swipe.card) commit(dir); }
+
+$("#swipeOpenBtn").addEventListener("click", openSwipe);
+$("#swipeClose").addEventListener("click", closeSwipe);
+$("#btnSkip").addEventListener("click", ()=> swipeAction("left"));
+$("#btnWatch").addEventListener("click", ()=> swipeAction("right"));
+$("#decidedChip").addEventListener("click", e=>{
+  state.filters.decidedOnly = !state.filters.decidedOnly;
+  e.currentTarget.setAttribute("aria-pressed", state.filters.decidedOnly);
+  render();
+});
+document.addEventListener("keydown", e=>{
+  if(!swipe.active) return;
+  if(e.key==="ArrowRight") swipeAction("right");
+  else if(e.key==="ArrowLeft") swipeAction("left");
+  else if(e.key==="Escape") closeSwipe();
+});
+
 /* ---------- İlk açılış ---------- */
 $("#rtMinVal").textContent = "0";
+restoreWatchlist();
 render();
-if(!state.omdbKey || !state.tmdbKey){
-  // Anahtar yoksa kullanıcıyı boş durum yönlendirir; modalı zorlamıyoruz.
+if(state.omdbKey && state.tmdbKey && state.movies.some(m=>m.status==="new")){
+  enrichAll(false); // önbellekten anında dolar, eksikler API'den tamamlanır
 }
 </script>
 </body>
